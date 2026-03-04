@@ -6,29 +6,19 @@ const morgan = require("morgan");
 
 const app = express();
 
-// ======================
-// MIDDLEWARES
-// ======================
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-// ======================
-// CONFIG
-// ======================
+
 const PORT = process.env.SERVER_PORT || 3000;
 
-// ======================
-// DADOS MOCK (EM MEMÓRIA)
-// ======================
+
 let filmes = [
   { id: 1, title: "O Senhor dos Anéis", year: 1977 },
   { id: 2, title: "O Hobbit", year: 1980 }
 ];
 
-// ======================
-// ROTAS
-// ======================
 
 // Rota base (teste)
 app.get("/", (req, res) => {

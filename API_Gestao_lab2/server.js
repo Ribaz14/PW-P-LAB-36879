@@ -6,107 +6,98 @@ const morgan = require("morgan");
 
 const app = express();
 
-// ======================
-// MIDDLEWARES
-// ======================
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-// ======================
-// CONFIG
-// ======================
+
 const PORT = process.env.SERVER_PORT || 3000;
 
-// ======================
-// DADOS MOCK (EM MEMÓRIA)
-// ======================
-let filmes = [
-  { id: 1, title: "O Senhor dos Anéis", year: 1977 },
-  { id: 2, title: "O Hobbit", year: 1980 }
+
+let tasks = [
+    { id: 1, title: "Estudar Node.js", completed: false, priority: "high" },
+    { id: 2, title: "Fazer LAB-1", completed: true, priority: "medium" }
 ];
 
-// ======================
-// ROTAS
-// ======================
 
 // Rota base (teste)
 app.get("/", (req, res) => {
   res.json({ message: "API a funcionar 🚀" });
 });
 
-// GET /filmes — listar todos os filmes
-app.get("/filmes", (req, res) => {
-  res.status(200).json({ data: filmes });
+// GET /tasks — listar todas as tarefas
+app.get("/tasks", (req, res) => {
+  res.status(200).json({ data: tasks });
 });
 
-// GET /filmes/:id — obter um filme
-app.get("/filmes/:id", (req, res) => {
+// GET /tasks/:id — obter uma task
+app.get("/tasks/:id", (req, res) => {
   const id = Number(req.params.id);
-  const filme = filmes.find(f => f.id === id);
+  const filme = tasks.find(f => f.id === id);
 
   if (!filme) {
-    return res.status(404).json({ message: "Filme não encontrado" });
+    return res.status(404).json({ message: "Task não encontrada" });
   }
 
   res.status(200).json({ data: filme });
 });
 
-// POST /filmes — criar filme
-app.post("/filmes", (req, res) => {
-  const { title, year } = req.body;
+// POST /tasks — criar task
+app.post("/tasks", (req, res) => {
+  const { title, completed, priority } = req.body;
 
-  if (!title || !Number.isInteger(year)) {
+  if (!title || typeof completed !== "boolean" || !priority) {
     return res.status(400).json({
-      message: "Title (string) e year (number) são obrigatórios"
+      message: "Title (string), completed (boolean), e priority (string) são obrigatórios"
     });
   }
 
-  const novoFilme = {
-    id: filmes.length ? filmes[filmes.length - 1].id + 1 : 1,
+  const novoTasks = {
+    id: tasks.length ? tasks[tasks.length - 1].id + 1 : 1,
     title,
-    year
+    completed,
+    priority
   };
 
-  filmes.push(novoFilme);
-  res.status(201).json({ data: novoFilme });
+  tasks.push(novoTasks);
+  res.status(201).json({ data: novoTasks });
 });
 
-// PUT /filmes/:id — atualizar filme
-app.put("/filmes/:id", (req, res) => {
+// PUT /tasks/:id — atualizar task
+app.put("/tasks/:id", (req, res) => {
   console.log("PARAMS:", req.params);
   console.log("BODY:", req.body);
 
   const id = parseInt(req.params.id);
-  const index = filmes.findIndex(f => f.id === id);
+  const index = tasks.findIndex(f => f.id === id);
 
   if (index === -1) {
-    return res.status(404).json({ message: "Filme não encontrado" });
+    return res.status(404).json({ message: "Task não encontrada" });
   }
 
-  const { title, year } = req.body;
+  const { title, completed, priority } = req.body;
 
-  if (!title || !Number.isInteger(year)) {
+  if (!title || typeof completed !== "boolean" || !priority) {
     return res.status(400).json({
-      message: "Title (string) e year (number) são obrigatórios"
+      message: "Title (string), completed (boolean), e priority (string) são obrigatórios"
     });
   }
 
-  filmes[index] = { id, title, year };
-  res.status(200).json({ data: filmes[index] });
+  tasks[index] = { id, title, completed, priority };
+  res.status(200).json({ data: tasks[index] });
 });
 
-// DELETE /filmes/:id — apagar filme
-app.delete("/filmes/:id", (req, res) => {
+// DELETE /tasks/:id — apagar task
+app.delete("/tasks/:id", (req, res) => {
   const id = Number(req.params.id);
-  const index = filmes.findIndex(f => f.id === id);
+  const index = tasks.findIndex(f => f.id === id);
 
   if (index === -1) {
-    return res.status(404).json({ message: "Filme não encontrado" });
+    return res.status(404).json({ message: "Task não encontrada" });
   }
 
-  filmes.splice(index, 1);
-  res.status(200).json({ message: "Filme apagado com sucesso" });
+  tasks.splice(index, 1);
+  res.status(200).json({ message: "Task apagada com sucesso" });
 });
 
 // ======================
