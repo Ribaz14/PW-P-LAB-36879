@@ -100,9 +100,7 @@ app.delete("/tasks/:id", (req, res) => {
   res.status(200).json({ message: "Task apagada com sucesso" });
 });
 
-// ======================
-// SERVIDOR
-// ======================
+
 app.listen(PORT, () => {
   console.log(`✅ Servidor a correr em http://localhost:${PORT}`);
 });
